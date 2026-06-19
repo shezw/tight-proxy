@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+tight-proxy.config.json
+tight-proxy.config.local.json
+whitelist.txt

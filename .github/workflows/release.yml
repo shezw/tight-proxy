@@ -1,0 +1,143 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: macos-arm64
+            runner: macos-15
+            goos: darwin
+            goarch: arm64
+            archive: tar.gz
+          - target: macos-x86_64
+            runner: macos-15-intel
+            goos: darwin
+            goarch: amd64
+            archive: tar.gz
+          - target: windows-arm64
+            runner: windows-11-arm
+            goos: windows
+            goarch: arm64
+            archive: zip
+          - target: windows-x86_64
+            runner: windows-2025
+            goos: windows
+            goarch: amd64
+            archive: zip
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            goos: linux
+            goarch: arm64
+            archive: tar.gz
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+            goos: linux
+            goarch: amd64
+            archive: tar.gz
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate semver tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag must use vMAJOR.MINOR.PATCH, got ${tag}" >&2
+            exit 1
+          fi
+          version="${tag#v}"
+          echo "VERSION=${version}" >> "${GITHUB_ENV}"
+          if [[ -f VERSION ]]; then
+            file_version="$(tr -d '[:space:]' < VERSION)"
+            if [[ "${file_version}" != "${version}" ]]; then
+              echo "VERSION file (${file_version}) must match release tag (${version})" >&2
+              exit 1
+            fi
+          fi
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache: true
+
+      - name: Install Linux tray dependencies
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y gcc pkg-config libgtk-3-dev libayatana-appindicator3-dev
+
+      - name: Test
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            export CGO_ENABLED=0
+            go test ./...
+          elif [[ "${RUNNER_OS}" == "macOS" ]]; then
+            go test -ldflags="-linkmode=external" ./...
+          else
+            go test ./...
+          fi
+
+      - name: Build
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GOOS="${{ matrix.goos }}"
+          export GOARCH="${{ matrix.goarch }}"
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            export CGO_ENABLED=0
+            ext=".exe"
+          else
+            export CGO_ENABLED=1
+            ext=""
+          fi
+
+          package="tight-proxy-${VERSION}-${{ matrix.target }}"
+          mkdir -p "dist/${package}"
+          go build -trimpath -ldflags="-s -w" -o "dist/${package}/tight-proxy${ext}" ./cmd/tight-proxy
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            go build -trimpath -ldflags="-s -w -H windowsgui" -o "dist/${package}/tight-proxy-tray${ext}" ./cmd/tight-proxy-tray
+          else
+            go build -trimpath -ldflags="-s -w" -o "dist/${package}/tight-proxy-tray${ext}" ./cmd/tight-proxy-tray
+          fi
+          cp README.md README.en.md VERSION tight-proxy.config.example.json whitelist.example.txt "dist/${package}/"
+
+      - name: Archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="tight-proxy-${VERSION}-${{ matrix.target }}"
+          cd dist
+          if [[ "${{ matrix.archive }}" == "zip" ]]; then
+            pwsh -NoLogo -NoProfile -Command "Compress-Archive -Path '${package}' -DestinationPath '${package}.zip' -Force"
+            echo "ASSET=dist/${package}.zip" >> "${GITHUB_ENV}"
+          else
+            tar -czf "${package}.tar.gz" "${package}"
+            echo "ASSET=dist/${package}.tar.gz" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Upload release asset
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release upload "${GITHUB_REF_NAME}" "${ASSET}" --clobber

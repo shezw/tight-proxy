@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>tight-proxy</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>tight-proxy</h1>
+          <p id="statusText">未启动</p>
+        </div>
+        <div class="actions">
+          <button id="saveBtn" type="button">保存</button>
+          <button id="toggleBtn" type="button" class="primary">启动</button>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>本地代理入口</h2>
+        <div class="grid two">
+          <label>
+            <span>Host</span>
+            <input id="listenHost" autocomplete="off">
+          </label>
+          <label>
+            <span>Port</span>
+            <input id="listenPort" type="number" min="1" max="65535">
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>上游代理</h2>
+        <div class="proxyTable">
+          <div class="proxyHead">
+            <span>协议</span>
+            <span>启用</span>
+            <span>Host</span>
+            <span>Port</span>
+            <span>Username</span>
+            <span>Password</span>
+          </div>
+          <div class="proxyRow" data-proxy="http">
+            <strong>HTTP</strong>
+            <input class="proxyEnabled" type="checkbox">
+            <input class="proxyHost" autocomplete="off">
+            <input class="proxyPort" type="number" min="1" max="65535">
+            <input class="proxyUsername" autocomplete="off">
+            <input class="proxyPassword" type="password">
+          </div>
+          <div class="proxyRow" data-proxy="https">
+            <strong>HTTPS</strong>
+            <input class="proxyEnabled" type="checkbox">
+            <input class="proxyHost" autocomplete="off">
+            <input class="proxyPort" type="number" min="1" max="65535">
+            <input class="proxyUsername" autocomplete="off">
+            <input class="proxyPassword" type="password">
+          </div>
+          <div class="proxyRow" data-proxy="ftp">
+            <strong>FTP</strong>
+            <input class="proxyEnabled" type="checkbox">
+            <input class="proxyHost" autocomplete="off">
+            <input class="proxyPort" type="number" min="1" max="65535">
+            <input class="proxyUsername" autocomplete="off">
+            <input class="proxyPassword" type="password">
+          </div>
+          <div class="proxyRow" data-proxy="socks5">
+            <strong>SOCKS5</strong>
+            <input class="proxyEnabled" type="checkbox">
+            <input class="proxyHost" autocomplete="off">
+            <input class="proxyPort" type="number" min="1" max="65535">
+            <input class="proxyUsername" autocomplete="off">
+            <input class="proxyPassword" type="password">
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="sectionTitle">
+          <h2>作为主机</h2>
+          <label class="inlineCheck">
+            <input id="relayEnabled" type="checkbox">
+            <span>开启中转</span>
+          </label>
+        </div>
+        <div class="relayTable">
+          <div class="relayHead">
+            <span></span>
+            <span>代理入口 Host</span>
+            <span>入口 Port</span>
+            <span>代理出口 Host</span>
+            <span>出口 Port</span>
+            <span></span>
+          </div>
+          <div id="relayRows"></div>
+        </div>
+        <button id="addRelayBtn" type="button" class="smallBtn">添加中转</button>
+      </section>
+
+      <section class="panel grow">
+        <div class="sectionTitle">
+          <h2>白名单</h2>
+          <span id="whitelistPath"></span>
+        </div>
+        <textarea id="whitelist" spellcheck="false"></textarea>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

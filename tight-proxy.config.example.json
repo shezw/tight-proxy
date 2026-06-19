@@ -1,0 +1,58 @@
+{
+  "enabled": true,
+  "listen": {
+    "host": "127.0.0.1",
+    "port": 7890
+  },
+  "controlListen": {
+    "host": "127.0.0.1",
+    "port": 3000
+  },
+  "whitelistFile": "whitelist.example.txt",
+  "upstreams": {
+    "http": {
+      "enabled": true,
+      "host": "127.0.0.1",
+      "port": 8080,
+      "username": "",
+      "password": ""
+    },
+    "https": {
+      "enabled": false,
+      "host": "127.0.0.1",
+      "port": 8080,
+      "username": "",
+      "password": ""
+    },
+    "ftp": {
+      "enabled": false,
+      "host": "127.0.0.1",
+      "port": 21,
+      "username": "",
+      "password": ""
+    },
+    "socks5": {
+      "enabled": false,
+      "host": "127.0.0.1",
+      "port": 1080,
+      "username": "",
+      "password": ""
+    }
+  },
+  "relay": {
+    "enabled": false,
+    "rules": [
+      {
+        "enabled": true,
+        "entry": {
+          "host": "0.0.0.0",
+          "port": 34567
+        },
+        "exit": {
+          "host": "127.0.0.1",
+          "port": 45678
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,336 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #fff;
+  --line: #d8dee8;
+  --text: #17202f;
+  --muted: #687486;
+  --primary: #1e6bff;
+  --primary-dark: #1554cc;
+  --ok: #147a4d;
+  --danger: #c33131;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.topbar,
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 22px;
+}
+
+h2 {
+  font-size: 14px;
+}
+
+#statusText {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  min-width: 88px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+}
+
+button.primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+button.primary:hover {
+  background: var(--primary-dark);
+}
+
+.panel {
+  padding: 16px;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid.four {
+  grid-template-columns: 120px minmax(0, 1fr) 120px 100px;
+}
+
+.proxyTable {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.proxyHead,
+.proxyRow {
+  display: grid;
+  grid-template-columns: 74px 48px minmax(140px, 1fr) 100px minmax(110px, 0.7fr) minmax(110px, 0.7fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.proxyHead {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.proxyRow {
+  min-height: 38px;
+}
+
+.proxyRow strong {
+  font-size: 13px;
+}
+
+.proxyRow input {
+  height: 34px;
+}
+
+.proxyRow .proxyEnabled {
+  width: 18px;
+  height: 18px;
+  justify-self: center;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+label span,
+.sectionTitle span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+}
+
+input,
+select {
+  height: 36px;
+  padding: 0 10px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 107, 255, 0.14);
+}
+
+.switch {
+  align-items: flex-start;
+}
+
+.switch input {
+  width: 20px;
+  height: 20px;
+}
+
+.grow {
+  display: flex;
+  flex: 1;
+  min-height: 220px;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inlineCheck {
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.inlineCheck input {
+  width: 18px;
+  height: 18px;
+}
+
+.relayTable {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.relayHead,
+.relayRow {
+  display: grid;
+  grid-template-columns: 42px minmax(150px, 1fr) 92px minmax(150px, 1fr) 92px 72px;
+  gap: 8px;
+  align-items: center;
+}
+
+.relayHead {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.relayRow input {
+  height: 34px;
+}
+
+.relayEnableCell {
+  align-items: center;
+}
+
+.relayRuleEnabled {
+  width: 18px;
+  height: 18px;
+}
+
+.smallBtn,
+.removeRelayBtn {
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px;
+}
+
+.smallBtn {
+  margin-top: 10px;
+}
+
+textarea {
+  flex: 1;
+  min-height: 180px;
+  margin-top: 12px;
+  padding: 10px;
+  resize: none;
+  line-height: 1.45;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
+.running #statusText {
+  color: var(--ok);
+}
+
+.stopped #statusText {
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions,
+  .grid.two,
+  .grid.four {
+    grid-template-columns: 1fr;
+  }
+
+  .proxyHead {
+    display: none;
+  }
+
+  .proxyRow {
+    grid-template-columns: 72px 44px 1fr 76px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .proxyUsername,
+  .proxyPassword {
+    grid-column: span 2;
+  }
+
+  .relayHead {
+    display: none;
+  }
+
+  .relayRow {
+    grid-template-columns: 42px 1fr 80px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .relayExitHost {
+    grid-column: 2;
+  }
+
+  .actions {
+    display: grid;
+  }
+
+  button {
+    width: 100%;
+  }
+}

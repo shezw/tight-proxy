@@ -1,0 +1,4 @@
+# Empty or comment-only whitelist means all domains use the upstream proxy.
+# One domain per line. Matching includes exact domain and subdomains.
+example.com
+github.com
