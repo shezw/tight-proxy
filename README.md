@@ -93,7 +93,7 @@ git tag v0.1.13
 git push origin main v0.1.13
 ```
 
-也可以在 GitHub 上创建 `v0.1.13` release。release 发布后，GitHub Actions 才会构建并上传这些产物：
+推送 `vX.Y.Z` tag 后，GitHub Actions 会自动创建同名 GitHub Release。Release 发布后，另一个 GitHub Actions workflow 才会构建并上传这些产物：
 
 - `macos-arm64`
 - `macos-x86_64`

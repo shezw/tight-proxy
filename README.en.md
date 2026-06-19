@@ -93,7 +93,7 @@ git tag v0.1.13
 git push origin main v0.1.13
 ```
 
-You can also create a `v0.1.13` release on GitHub. GitHub Actions only builds and uploads release assets when a release is published.
+After a `vX.Y.Z` tag is pushed, GitHub Actions automatically creates the matching GitHub Release. A separate Release workflow builds and uploads assets only when that release is published.
 
 Release targets:
 

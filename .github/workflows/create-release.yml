@@ -1,0 +1,58 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  create:
+    name: Create GitHub release
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate semver tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag must use vMAJOR.MINOR.PATCH, got ${tag}" >&2
+            exit 1
+          fi
+          version="${tag#v}"
+          file_version="$(tr -d '[:space:]' < VERSION)"
+          if [[ "${file_version}" != "${version}" ]]; then
+            echo "VERSION file (${file_version}) must match release tag (${version})" >&2
+            exit 1
+          fi
+
+      - name: Create release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = context.ref.replace('refs/tags/', '');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            try {
+              await github.rest.repos.getReleaseByTag({ owner, repo, tag });
+              core.info(`Release ${tag} already exists`);
+              return;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: tag,
+              name: `tight-proxy ${tag}`,
+              body: `Release build for ${tag}. Platform assets are built by the Release workflow.`,
+              draft: false,
+              prerelease: false,
+              generate_release_notes: true,
+            });
