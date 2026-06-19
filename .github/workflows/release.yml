@@ -22,13 +22,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.ref }}
+          fetch-depth: 0
 
       - name: Resolve version
         id: version
         shell: bash
         run: |
           set -euo pipefail
-          gh release upload "${RELEASE_TAG}" "${ASSET}" --clobber
           if [[ "${{ github.event_name }}" == "release" ]]; then
             tag="${{ github.event.release.tag_name }}"
           else
@@ -119,6 +119,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare.outputs.tag }}
+          fetch-depth: 0
 
       - name: Export version
         shell: bash
@@ -198,3 +199,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          gh release upload "${RELEASE_TAG}" "${ASSET}" --clobber
